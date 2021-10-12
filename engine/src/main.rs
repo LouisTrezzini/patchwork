@@ -1,7 +1,8 @@
 use lazy_static::lazy_static;
-use model::Tile;
+use models::tile::Tile;
+use crate::models::game_state::GameState;
 
-mod model;
+mod models;
 
 const LEATHER_TS: [u32; 5] = [20, 26, 32, 44, 50];
 const BUTTON_TS: [u32; 8] = [5, 11, 17, 23, 29, 35, 41, 53];
@@ -56,4 +57,9 @@ fn main() {
     for tile in TILES.iter() {
         tile.display()
     }
+
+    let game_state = GameState::new();
+
+    println!("{:?}", game_state.tiles_order);
+    println!("{:?}", game_state.get_next_tile_ids());
 }
