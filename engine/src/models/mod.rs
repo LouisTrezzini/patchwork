@@ -1,5 +1,8 @@
 pub mod action;
 pub mod board;
+pub mod color;
+pub mod constants;
+pub mod game;
 pub mod game_state;
 pub mod player;
 pub mod player_state;
