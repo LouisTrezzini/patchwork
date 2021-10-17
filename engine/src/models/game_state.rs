@@ -113,16 +113,18 @@ impl GameState {
     }
 
     fn advance_player(&mut self, color: Color) {
-        let (player_state, opponent_state) = GameState::extract_state(color, &mut self.green_state, &mut self.yellow_state);
+        {
+            let (player_state, opponent_state) = GameState::extract_state(color, &mut self.green_state, &mut self.yellow_state);
 
-        let prev_position = player_state.position;
-        player_state.position = min(opponent_state.position + 1, NUM_TS);
-        let diff = player_state.position - prev_position;
-        if diff == 0 {
-            panic!("illegal state");
+            let prev_position = player_state.position;
+            player_state.position = min(opponent_state.position + 1, NUM_TS);
+            let diff = player_state.position - prev_position;
+            if diff == 0 {
+                panic!("illegal state");
+            }
+            player_state.buttons += diff as u32;
+            GameState::apply_events(player_state, prev_position);
         }
-        player_state.buttons += diff as u32;
-        GameState::apply_events(player_state, prev_position);
     }
 
     fn place_tile(&mut self, color: Color, tile_location: &TileLocation) {
@@ -134,8 +136,9 @@ impl GameState {
         {
             let (player_state, _) = GameState::extract_state(color, &mut self.green_state, &mut self.yellow_state);
             player_state.buttons -= TILES[tile_location.tile_id()].button_cost();
-            // TODO add to board
+            player_state.board.add_tile(tile_location);
             player_state.position += TILES[tile_location.tile_id()].time_cost();
+            player_state.position = min(player_state.position, NUM_TS);
         }
     }
 
@@ -148,7 +151,7 @@ impl GameState {
         }
     }
 
-    fn extract_state<'a>(color: Color<>, green_state: &'a mut PlayerState, yellow_state: &'a mut PlayerState) -> (&'a mut PlayerState, &'a mut PlayerState) {
+    pub fn extract_state<'a>(color: Color<>, green_state: &'a mut PlayerState, yellow_state: &'a mut PlayerState) -> (&'a mut PlayerState, &'a mut PlayerState) {
         match color {
             Color::Green => (green_state, yellow_state),
             Color::Yellow => (yellow_state, green_state),

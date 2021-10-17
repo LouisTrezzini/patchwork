@@ -20,22 +20,29 @@ impl RandomPlayer {
 impl Player for RandomPlayer {
     fn get_action(&self, game_state: &GameState) -> Action {
         let available_tiles = game_state.get_available_tile_ids_for(self.color);
-        println!("{:?} {:?}", available_tiles, self.color);
-        if available_tiles.len() == 0 {
-            return Action::Advance;
+
+        // TODO sort by expected value
+        let player_state = match self.color {
+            Color::Green => &game_state.green_state,
+            Color::Yellow => &game_state.yellow_state,
+        };
+
+        for i in 0..available_tiles.len() {
+            for r in 0..8 {
+                for c in 0..8 {
+                    let tile_location = TileLocation::new(
+                        available_tiles[i],
+                        r,
+                        c,
+                        Orientation::Base,
+                    );
+                    if player_state.board.can_place_tile(&tile_location) {
+                        return Action::PlaceTile(tile_location);
+                    }
+                }
+            }
         }
 
-        let mut rng = rand::thread_rng();
-
-        let tile_id = available_tiles[rng.gen_range(0..available_tiles.len())];
-
-        Action::PlaceTile(
-            TileLocation::new(
-                tile_id,
-                0,
-                0,
-                Orientation::Base,
-            )
-        )
+        Action::Advance
     }
 }

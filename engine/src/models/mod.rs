@@ -1,3 +1,6 @@
+use std::fmt::{Display, Formatter};
+use array2d::Array2D;
+
 pub mod action;
 pub mod board;
 pub mod color;
