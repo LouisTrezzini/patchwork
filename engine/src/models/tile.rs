@@ -18,7 +18,10 @@ impl Tile {
             }
         }).collect()).collect();
         Tile {
-            button_cost, time_cost, button_income, shape: Array2D::from_rows(&rows)
+            button_cost,
+            time_cost,
+            button_income,
+            shape: Array2D::from_rows(&rows),
         }
     }
 

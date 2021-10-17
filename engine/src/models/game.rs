@@ -28,8 +28,13 @@ impl Game {
 
     pub fn play_game(&mut self) {
         while let Some(color) = self.game_state.get_current_player() {
+            println!("==========");
             println!("available tiles: {:?}", self.game_state.get_available_tile_ids_for(color));
             println!("cost: {:?}", self.game_state.get_available_tile_ids_for(color).iter().map(|&id|TILES[id].button_cost()).collect::<Vec<u32>>());
+            match color {
+                Color::Green => self.game_state.green_state.board.display(),
+                Color::Yellow => self.game_state.yellow_state.board.display(),
+            };
             println!("asking {:?} for action", color);
             let action = match color {
                 Color::Green => self.green_player.get_action(&self.game_state),
@@ -41,6 +46,10 @@ impl Game {
                 Color::Green => &self.game_state.green_state,
                 Color::Yellow => &self.game_state.yellow_state,
             });
+            match color {
+                Color::Green => self.game_state.green_state.board.display(),
+                Color::Yellow => self.game_state.yellow_state.board.display(),
+            };
         }
         println!("game done. yellow score: {} green score: {}", self.game_state.yellow_state.score(), self.game_state.green_state.score());
     }
