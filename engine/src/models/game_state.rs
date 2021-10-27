@@ -135,10 +135,12 @@ impl GameState {
         self.used_tiles[tile_location.tile_id()] = true;
         {
             let (player_state, _) = GameState::extract_state(color, &mut self.green_state, &mut self.yellow_state);
+            let prev_position = player_state.position;
             player_state.buttons -= TILES[tile_location.tile_id()].button_cost();
             player_state.board.add_tile(tile_location);
             player_state.position += TILES[tile_location.tile_id()].time_cost();
             player_state.position = min(player_state.position, NUM_TS);
+            GameState::apply_events(player_state, prev_position);
         }
     }
 
